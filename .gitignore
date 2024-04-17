@@ -137,10 +137,10 @@ venv.bak/
 
 # mkdocs documentation
 /site
-/Scripts
-Scripts
-/share
-share
+./Scripts/
+.Scripts/
+./share/
+.share/
 
 # mypy
 .mypy_cache/
