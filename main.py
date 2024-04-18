@@ -36,3 +36,49 @@ test_y = pd.read_csv("data/test_labels.csv")
 print(train.head(), test.head(), test_y.head())
 print(train.describe())
 print(test.shape, train.shape)
+
+
+sns.set_theme(color_codes= True)
+comment_len = train.comment_text.str.len()
+sns.histplot(comment_len, kde= False, bins= 20, color='steelblue')
+
+
+# subsetting labels from the training data
+train_labels = train[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']]
+label_count = train_labels.sum()
+
+plt.plot(label_count, kind = 'bar', title= 'Labels Frequency', color= 'Steelblue')
+
+
+# code to draw bar graph for visualisign distribution of classes within each label
+barWidth = 0.25
+bars1 = [sum(train['toxic'] == 1), sum(train['obscene'] == 1), sum(train['insult'] == 1), sum(train['severe_toxic'] == 1),
+         sum(train['identity_hate'] == 1), sum(train['threat'] == 1)]
+bars2 = [sum(train['toxic'] == 0), sum(train['obscene'] == 0), sum(train['insult'] == 0), sum(train['severe_toxic'] == 0),
+         sum(train['identity_hate'] == 0), sum(train['threat'] == 0)]
+
+r1 = np.arange(len(bars1))
+r2 = [x + barWidth for x in r1]
+
+plt.bar(r1, bars1, color= 'steelblue', width= barWidth, label= 'labeled = 1')
+plt.bar(r2, bars2, color= 'lightsteelblue', width= barWidth, label= 'labeled = 0')
+
+plt.xlabel('group', fontweight= 'bold')
+plt.xticks([r + barWidth for r in range(len(bars1))], ['Toxic', 'Obscene', 'Insult', 'Severe Toxic', 'Identity Hate', 'Threat'])
+plt.legend()
+plt.show()
+
+# example of clean comment
+print(train.comment_text[0])
+# example of toxic comment
+print(train[train.toxic == 1].iloc[1, 1])
+
+
+# cross correlation matrix across labels
+rowsums = train.iloc[:, 2:].sum(axis= 1)
+temp = train.iloc[:, 2:-1]
+train_corr = temp[rowsums > 0]
+corr = train_corr.corr()
+plt.figure(figsize= (10, 8))
+sns.heatmap(corr, xticklabels= corr.columns.values, yticklabels= corr.columns.values, annot= True, cmap= 'Blues')
+
