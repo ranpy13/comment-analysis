@@ -121,3 +121,11 @@ def tokenize(text):
     words = [w for w in words if len(w) > 2]
     return words
 
+
+
+# benchmarking different vectors
+vector = TfidfVectorizer(ngram_range=(1, 1), analyzer= 'word', tokenizer= tokenize, stop_words= 'english', strip_accents= 'unicode', use_idf= 1, min_df= 10)
+X_train = vector.fit_transform(train['comment_text'])
+X_test = vector.transform(test['comment_text'])
+
+print(vector.get_feature_names()[0:20])
