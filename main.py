@@ -13,6 +13,7 @@ import seaborn as sns
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -129,3 +130,35 @@ X_train = vector.fit_transform(train['comment_text'])
 X_test = vector.transform(test['comment_text'])
 
 print(vector.get_feature_names()[0:20])
+
+
+
+# Modeling and Evalution
+# baseline model - naive bayes
+
+# cross-validation
+clf1 = MultinomialNB()
+clf2 = LogisticRegression()
+clf3 = LinearSVC()
+
+def cross_validation_score(classifier, X_train, y_train):
+    methods = []
+    name = classifier.__class__.__name__.split('.')[-1]
+
+    for label in test_labels:
+        recall = cross_val_score(classifier, X_train, y_train[label], cv= 10, scoring= 'recall')
+        f1 = cross_val_score(classifier, X_train, y_train[label], cv= 10, scoring= 'f1k')
+        methods.append([name, label, recall.mean(), f1.mean()])
+    
+    return methods
+
+
+methods1_cv = pd.DataFrame(cross_validation_score(clf1, X_train, train))
+methods2_cv = pd.DataFrame(cross_validation_score(clf2, X_train, train))
+methods3_cv = pd.DataFrame(cross_validation_score(clf3, X_train, train))
+
+# creating a dataframe to show summary of results
+methods_cv = pd.concat([methods1_cv, methods2_cv, methods3_cv])
+methods_cv.columns = ['Model', 'Label', 'Recall', 'F1']
+meth_cv = methods_cv.reset_index()
+print(meth_cv[['Model', 'Label', 'Recall', 'F1']])
