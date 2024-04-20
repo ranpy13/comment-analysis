@@ -162,3 +162,53 @@ methods_cv = pd.concat([methods1_cv, methods2_cv, methods3_cv])
 methods_cv.columns = ['Model', 'Label', 'Recall', 'F1']
 meth_cv = methods_cv.reset_index()
 print(meth_cv[['Model', 'Label', 'Recall', 'F1']])
+
+
+
+
+
+# X modeling and evaluation
+def score(classifier, X_train, y_train, X_test, y_test):
+    methods = []
+    hloss = []
+    name = classifier.__class__.__name__.split('.')[-1]
+    predict_df = pd.DataFrame()
+    predict_df['id'] = test_y['id']
+
+    for label in test_labels:
+        classifier.fit(X_train, y_train[label])
+        predicted = classifier.predict(X_test)
+        predict_df[label] = predicted
+        
+        recall = recall_score(y_test[y_test[label] != -1][label], predicted[y_test[label] != -1], average= 'weighted')
+        f1 = f1_score(y_test[y_test[label] != -1][label], predicted[y_test[label] != -1], average= 'weighted')
+        conf_mat = confusion_matrix(y_test[y_test[label] != -1][label], predicted[y_test[label] != -1])
+    
+    hamming_loss_score = hamming_loss(test_y[test_y['toxic'] != -1].iloc[:, 1:7], predict_df[test_y['toxic'] != -1].iloc[:, 1:7])
+    hloss.append([name, hamming_loss_score])
+
+    return hloss, methods
+
+
+h1, method1 = score(clf1, X_train, train, X_test, test_y)
+h2, method2 = score(clf2, X_train, train, X_test, test_y)
+h3, method3 = score(clf3, train, X_test, test_y)
+
+
+# summary of results
+methods1 = pd.DataFrame(method1)
+methods2 = pd.DataFrame(method2)
+methods3 = pd.DataFrame(method3)
+
+methods = pd.concat([methods1, methods2, methods3])
+methods.columns = ['Model', 'Label', 'Recall', 'F1', 'Confusion Matrix']
+meth = methods.reset_index()
+print(meth[['Model', 'Label', 'Recall', 'F1']])
+
+
+# Visualizing F1 score results through box-plot
+ax = sns.boxplot(x= 'Model', y= 'F1', data= methods, palette= 'Blues')
+sns.stripplot(x= 'Model', y= 'F1', data= methods, size= 8, edgecolor= 'gray', linewidth= 2, palette= 'Blues')
+ax.set_xticklabels(ax.get_xticklabels(), rotation= 20)
+plt.show()
+
