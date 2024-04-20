@@ -82,3 +82,26 @@ corr = train_corr.corr()
 plt.figure(figsize= (10, 8))
 sns.heatmap(corr, xticklabels= corr.columns.values, yticklabels= corr.columns.values, annot= True, cmap= 'Blues')
 
+
+# generating word clouds
+# vizualize the most common words conitrbuting to the token
+def W_Cloud(token):
+    threat_context = train[train[token] == 1]
+    threat_text = threat_context.comment_text
+    neg_text = pd.Series(threat_text).str.cat(sep=' ')
+    wordcloud = WordCloud(width= 1600, height= 800, max_font_size= 200).generate(neg_text)
+
+    plt.figure(figsize=(15, 10))
+    plt.imshow(wordcloud.recolor(colormap= "Blues"), interpolation= 'bilinear')
+    plt.axis('off')
+    plt.title(f"Most cmmon words associated with {token} comment", size= 20)
+    plt.show()
+
+token = input("Choose a class to vizualize the most common words contributing to the class: ")
+W_Cloud(token.lower())
+
+
+
+## Feature Engineering
+
+
