@@ -103,5 +103,21 @@ W_Cloud(token.lower())
 
 
 ## Feature Engineering
+test_labels = ["toxic", "severe_toxic", "obsence", "threat", "insult", "identify_hate"]
+def tokenize(text):
+    '''
+    Tokenize text and return a non-unique list of tokenized words found in the text.
+    Normalize to lowercase, strip punctuation, remove stop words, filter non-ascii characters.
+    Lemmatize the words and lastly drop words of length < 3. 
+    '''
+    text = text.lower()
+    regex = re.compile('[' + re.escape(string.punctuation) + '0-9\\r\\t\\n]')
+    nopunct = regex.sub(" ", text)
+    words = nopunct.split(' ')
 
+    #remove any non ascii
+    words = [word.encode('ascii', 'ignore').decode('ascii') for word in words]
+    lmtzr = [lmtzr.lemmatize(w) for w in words]
+    words = [w for w in words if len(w) > 2]
+    return words
 
