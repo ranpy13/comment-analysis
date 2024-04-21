@@ -212,3 +212,69 @@ sns.stripplot(x= 'Model', y= 'F1', data= methods, size= 8, edgecolor= 'gray', li
 ax.set_xticklabels(ax.get_xticklabels(), rotation= 20)
 plt.show()
 
+
+
+# Vizualizing performance per classifier accross each category
+print("Plot for Multinomial Naive Bayes Classifier")
+m2 = methods[methods.Model =='MultinomialNB']
+m2.set_index(["Label"], inplace= True)
+m2.plot(figsize= (16, 8), kind='bar', title= 'Metrics', rot= 60, ylim= (0.0, 1), colormap= 'tab10')
+
+
+# for Logistic regression
+m2 = methods[methods.Model =='LogisticRegression']
+m2.set_index(["Label"], inplace= True)
+m2.plot(figsize= (16, 8), kind= 'bar', title= 'Metrics', rot= 60, ylim= (0.0, 1), colormap= 'tab10')
+
+
+# for Linear SVC
+m2 = methods[methods.Model =='LinearSVC']
+m2.set_index(["Label"], inplace= True)
+m2.plot(figsize= (16, 8), kind= 'bar', title= 'Metrics', rot= 60, ylim= (0.0, 1), colormap= 'tab10')
+
+
+# Confusion matrix visualization
+def drawConfuisonMatrix(cm):
+    cm = cm.astype('float')/cm.sum(axis = 1)[:, np.newaxis]
+    ax = plt.axes()
+    sns.heatmap(cm, 
+                annot= True,
+                annot_kws= {'size': 16},
+                fmt= '.2f',
+                linewidths=2, 
+                linecolor= 'steelblue',
+                xticklabels= ('Non-toxic', 'Toxic'),
+                yticklabels= ('Non-toxic', 'Toxic'))
+    
+    plt.ylabel('True', fontsize= 18)
+    plt.xlabel('Predicted', fontsize= 18)
+    plt.show()
+
+
+def Matrix(label):
+    print(f"************{label} labelling**************")
+    labels = {"toxic": 0, "severe_toxic": 1, "obscene": 2,
+              "threat": 3, "insult": 4, "identity_hate": 5}
+    
+    pos = labels[label]
+    for i in ragne(pos, len(meth), 6):
+        print()
+        print(f"******** {meth['Model'][i]} ***********")
+        cm = meth['Confusion_Matrix'][i]
+        drawConfuisonMatrix(cm)
+
+
+token = input("Choose a class for the Confusion Matrix: ")
+Matrix(token.lower())
+
+
+
+# Aggregated Hamming Loss Score
+hl1_df = pd.DataFrame(h1)
+hl2_df = pd.DataFrame(h2)
+hl3_df = pd.DataFrame(h3)
+
+hammingLoss = pd.concat([hl1_df, hl2_df, hl3_df])
+hammingLoss.columns = ['Model', 'Hamming Loss']
+h1 = hammingLoss.reset_index()
+print(h1[['Model', 'Hamming_Loss']])
