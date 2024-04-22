@@ -7,6 +7,8 @@ import string
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+from timeit import default_timer as timer
+
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -278,3 +280,40 @@ hammingLoss = pd.concat([hl1_df, hl2_df, hl3_df])
 hammingLoss.columns = ['Model', 'Hamming Loss']
 h1 = hammingLoss.reset_index()
 print(h1[['Model', 'Hamming_Loss']])
+
+
+# Pipelines
+pipe_lr = Pipeline([('lr', LogisticRegression(class_weight= 'balanced'))])
+pipe_linear_svm = Pipeline(['svm', LinearSVC(class_weight= {1: 20})])
+pipelines = [pipe_lr, pipe_linear_svm]
+
+score_df = []
+for pipe in pipelines:
+    f1_values = []
+    recall_values = []
+    hl = []
+    training_time = []
+    predict_df = []
+    predict_df['id'] = test_y['id']
+    for label in test_labels:
+        start = timer()
+        pipe.fit(X_train, train[label])
+        train_time = timer() - start
+        predicted = pipe.predict(X_test)
+        predict_df[label] = predicted
+
+        f1_values.append(f1_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average= 'weighted'))
+        recall_values.append(recall_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average= 'weighted'))
+        training_time.append(train_time)
+        name = pipe.steps[-1][1].__class__.__name__.split('.')[-1]
+
+    hamming_loss_score = hamming_loss(test_y[test_y['toxic'] != -1].iloc[:, 1:7], predict_df[test_y['toxic'] != -1].iloc[:, 1:7])
+    val = [name, mean(f1_values, mean(recall_values), hamming_loss_score, mean(training_time))]
+    score_df.append(val)
+
+scores = pd.DataFrame(score_df)
+scores.columns = ['Model', 'F1', 'Recall', 'Hamming Loss', 'Training_Time']
+print(scores)
+
+
+
