@@ -377,3 +377,4 @@ tunned_scores = pd.DataFrame(tunned_model_score_df,)
 tunned_scores.columns = ['Model', 'F1',
                          'Recall', 'Hamming_Loss', 'Traing_Time']
 print(tunned_scores)
+
