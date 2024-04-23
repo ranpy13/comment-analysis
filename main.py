@@ -317,3 +317,63 @@ print(scores)
 
 
 
+
+# Hyperparameter tuning with grid search CV
+logistic_regression_classifier = LogisticRegression()
+parameter_grid = {'solver': ['newton-cg', 'lbfgs', 'liblinear'], 'class_weight': [None, 'balanced']}
+cross_validation = StratifiedKFold(n_splits= 5)
+
+grid_search = GridSearchCV(logistic_regression_classifier, param_grid= parameter_grid, cv= cross_validation, scoring= 'f1')
+grid_search.fit(X_train, train['toxic'])
+
+print("Best parameters: {}".format(grid_search.best_params_))
+print("Best estimater: {}".format(grid_search.best_estimator_))
+
+
+
+# SVM Classifier Tuning
+svm_classifier = LinearSVC()
+parameter_grid = {'class_weight': [None, 'balanced'], 'C': [1, 5, 10]}
+cross_validation = StratifiedKFold(n_splits= 5)
+grid_search = GridSearchCV(svm_classifier, param_grid= parameter_grid, cv= cross_validation, scoring= 'f1')
+
+grid_search.fit(X_train, train['toxic'])
+print("Best parameters: {}".format(grid_search.best_params_))
+print("Best estimator: {}".format(grid_search.best_estimator_))
+
+
+
+
+# Model Selection
+svm_clf = LinearSVC(c= 1, class_weight= None, dual= True, fit_intercept= True, intercept_scaling= 1, loss= 'squared_hinge', max_iter= 1000, multi_class= 'ovr', penalty= 'l2', random_state= None, tol= 0.0001, verbose= 0)
+lr_clf = LogisticRegression(c= 1.0, class_weight= None, dual= False, fit_intercept= True, intercept_scaling= 1, max_iter= 100, multi_class= 'warn', n_jobs= None, penalty= 'l2', random_state= None, solver= 'lbfgs', tol= 0.0001, verbose= 0, warm_start= False)
+tunned_model_score_df = []
+for model in [svm_clf, lr_clf]:
+    f1_values = []
+    recall_values = []
+    hl = []
+    training_time = []
+    predict_df = pd.DataFrame()
+    predict_df['id'] = test_y['id']
+
+    for label in test_labels:
+        start = timer()
+        model.fit(X_train, train[label])
+        training_time.append(timer() - start)
+        predicted = model.predict(X_test)
+        predict_df[label] = predicted
+
+        f1_values.append(f1_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average="weighted"))
+        recall_values.append(recall_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average="weighted"))
+        name = model.__class__.__name__
+
+    hamming_loss_score = hamming_loss(test_y[test_y['toxic'] != -1].iloc[:, 1:7], predict_df[test_y['toxic'] != -1].iloc[:, 1:7])
+    val = [name, mean(f1_values), mean(recall_values), hamming_loss_score, sum(training_time)]
+
+    print("Tunned Model Score = ", tunned_model_score_df.append(val))
+
+
+tunned_scores = pd.DataFrame(tunned_model_score_df,)
+tunned_scores.columns = ['Model', 'F1',
+                         'Recall', 'Hamming_Loss', 'Traing_Time']
+print(tunned_scores)
