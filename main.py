@@ -259,7 +259,7 @@ def Matrix(label):
               "threat": 3, "insult": 4, "identity_hate": 5}
     
     pos = labels[label]
-    for i in ragne(pos, len(meth), 6):
+    for i in range(pos, len(meth), 6):
         print()
         print(f"******** {meth['Model'][i]} ***********")
         cm = meth['Confusion_Matrix'][i]
@@ -423,7 +423,7 @@ print("Boosting Score: \n", boosting_score)
 # Voting Classifier
 ensemble_clf = VotingClassifier(estimators=[('lr', lr_clf),
                                             ('svm', svm_clf),
-                                            ('xgb', xgb_clf)], voting='hard')
+                                            ('xgb', xg_clf)], voting='hard')
 ensemble_score_df = []
 f1_values = []
 recall_values = []
