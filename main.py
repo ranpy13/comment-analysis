@@ -378,3 +378,45 @@ tunned_scores.columns = ['Model', 'F1',
                          'Recall', 'Hamming_Loss', 'Traing_Time']
 print(tunned_scores)
 
+
+
+
+
+# Ensembling
+# boosting models
+
+ab_clf = AdaBoostClassifier()
+gb_clf = GradientBoostingClassifier()
+xg_clf = xgb.XGBClassifier()
+boosting_models = [ab_clf, gb_clf, xg_clf]
+
+boosting_score_df = []
+for model in boosting_models:
+    f1_values = []
+    recall_values = []
+    training_time = []
+    hloss = []
+    predict_df = pd.DataFrame()
+    predict_df['id'] = test_y['id']
+
+    for idx, label in enumerate(test_labels):
+        start = timer()
+        model.fit(X_train, train[label])
+        predicted = model.predict(X_test)
+        training_time.append(timer() - start)
+        predict_df[label] = predicted
+        f1_values.append(f1_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average="weighted"))
+        recall_values.append(recall_score(test_y[test_y[label] != -1][label], predicted[test_y[label] != -1], average="weighted"))
+        name = model.__class__.__name__
+    
+    hamming_loss_score = hamming_loss(test_y[test_y['toxic'] != -1].iloc[:, 1:7], predict_df[test_y['toxic'] != -1].iloc[:, 1:7])
+    val = [name, mean(f1_values), mean(recall_values), hamming_loss_score, mean(training_time)]
+    boosting_score_df.append(val)
+
+
+# scores after boosting the models
+boosting_score = pd.DataFrame(boosting_score_df,) boosting_score.columns = ['Model', 'F1', 'Recall', 'Hamming_Loss', 'Training_Time'])
+print("Boosting Score: \n", boosting_score)
+
+
+# voting classifier
