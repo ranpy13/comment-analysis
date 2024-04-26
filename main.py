@@ -503,3 +503,48 @@ neg_text_train = train['comment_text'].str.cat(sep=' ')
 cntr_train = Counter(tokenize(neg_text_train))
 cntr_train.get('ucking')
 
+
+
+# Visual analysis of logistic learning
+def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
+                        n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+    """
+    Plot learning rate curve for the estimator with title, training data as X, 
+    labels as y.
+    """
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+
+    train_sizes, train_scores, test_scores = learning_curve(estimator,
+                                                            X, y, train_sizes=train_sizes, cv=cv, n_jobs=n_jobs)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="steelblue",
+             label="Training score")
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="olive",
+             label="Cross-validation score")
+
+    plt.legend(loc="best")
+    return plt
+
+
+title = "Learning Curves (Linear SVC) for TOXIC"
+cv = ShuffleSplit(n_splits=100, test_size=0.2, random_state=0)
+estimator = LinearSVC(C=1, class_weight=None, dual=True, fit_intercept=True,
+                      intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+                      multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
+                      verbose=0)
+plot_learning_curve(estimator, title, X_train,
+                    train['toxic'], ylim=(0.7, 1.01), cv=cv, n_jobs=4)
