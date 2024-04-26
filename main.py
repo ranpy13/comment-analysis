@@ -420,4 +420,44 @@ boosting_score.columns = ['Model', 'F1', 'Recall', 'Hamming_Loss', 'Training_Tim
 print("Boosting Score: \n", boosting_score)
 
 
+# Voting Classifier
+ensemble_clf = VotingClassifier(estimators=[('lr', lr_clf),
+                                            ('svm', svm_clf),
+                                            ('xgb', xgb_clf)], voting='hard')
+ensemble_score_df = []
+f1_values = []
+recall_values = []
+hl = []
+training_time = []
+
+predict_df = pd.DataFrame()
+predict_df['id'] = test_y['id']
+for label in test_labels:
+    start = timer()
+    ensemble_clf.fit(X_train, train[label])
+    training_time.append(timer() - start)
+    predicted = ensemble_clf.predict(X_test)
+    predict_df[label] = predicted
+    f1_values.append(f1_score(test_y[test_y[label] != -1][label],
+                              predicted[test_y[label] != -1],
+                              average="weighted"))
+    recall_values.append(recall_score(test_y[test_y[label] != -1][label],
+                                      predicted[test_y[label] != -1],
+                                      average="weighted"))
+    name = 'Ensemble'
+
+hamming_loss_score = hamming_loss(test_y[test_y['toxic'] != -1].iloc[:, 1:7],
+                                  predict_df[test_y['toxic'] != -1].iloc[:, 1:7])
+
+val = [name, mean(f1_values), mean(recall_values),
+       hamming_loss_score, mean(training_time)]
+ensemble_score_df.append(val)
+
+
+# printing the values
+ensemble_score = pd.DataFrame(ensemble_score_df,)
+ensemble_score.columns = ['Model', 'F1',
+                          'Recall', 'Hamming_Loss', 'Training_Time']
+print("Ensemble Score \n", ensemble_score)
+
 
