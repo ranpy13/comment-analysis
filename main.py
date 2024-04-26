@@ -415,8 +415,9 @@ for model in boosting_models:
 
 
 # scores after boosting the models
-boosting_score = pd.DataFrame(boosting_score_df,) boosting_score.columns = ['Model', 'F1', 'Recall', 'Hamming_Loss', 'Training_Time'])
+boosting_score = pd.DataFrame(boosting_score_df,)
+boosting_score.columns = ['Model', 'F1', 'Recall', 'Hamming_Loss', 'Training_Time']
 print("Boosting Score: \n", boosting_score)
 
 
-# voting classifier
+
