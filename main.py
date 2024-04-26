@@ -461,3 +461,45 @@ ensemble_score.columns = ['Model', 'F1',
 print("Ensemble Score \n", ensemble_score)
 
 
+
+
+# result interpretation
+label = 'toxic'
+lr = LinearSVC(C=1, class_weight=None, dual=True, fit_intercept=True,
+               intercept_scaling=1, loss='squared_hinge', max_iter=1000,
+               multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
+               verbose=0)
+lr.fit(X_train, train[label])
+Toxic_LR = lr.predict(X_test)
+test_combined = pd.concat([test, test_y], axis=1)
+
+commentCheck = test_combined[(test_combined.toxic == 1) & (
+    Toxic_LR == 0)].comment_text
+print("CommentCheck.shape = ", commentCheck.shape)
+
+
+
+# extract wrongly classified comments
+commentCheck = test_combined[(test_combined.toxic == 1) & (
+    Toxic_LR == 0)].comment_text
+
+neg_Check = pd.Series(commentCheck).str.cat(sep=' ')
+wordcloud = WordCloud(width=1600, height=800,
+                      max_font_size=200).generate(neg_Check)
+plt.figure(figsize=(15, 10))
+plt.imshow(wordcloud.recolor(colormap="Blues"), interpolation='bilinear')
+plt.axis("off")
+plt.title("Most common words from misclassified", size=20)
+plt.show()
+
+
+wrongWords = tokenize(neg_Check)
+stop_words = stopwords.words('English')
+wrongWords = [w for w in wrongWords if w not in stop_words]
+cntr = Counter(wrongWords)
+cntr.most_common(20)
+
+neg_text_train = train['comment_text'].str.cat(sep=' ')
+cntr_train = Counter(tokenize(neg_text_train))
+cntr_train.get('ucking')
+
