@@ -406,6 +406,8 @@ Notice that Muninomial Naive Bayes does not perform as well as the other two mod
 ## Vizualizing Performance
 Visualizing performance till now for each classifier across each cateogry
 
+### F1 and recall
+
 <div>
 <p align="center"> Mulitnomial Naive Bayes regression </p>
 
@@ -424,3 +426,270 @@ Visualizing performance till now for each classifier across each cateogry
 ![LSVC](image-8.png)
 </div>
 
+### Confusion Matrix
+
+
+
+<div>
+<p align="center"> Mulitnomial Naive Bayes regression </p>
+
+![MNB regression](image-9.png)
+</div>
+
+<div>
+<p align="center"> Logistic regression </p>
+
+![Logistic](image-10.png)
+</div>
+
+<div>
+<p align="center"> Linear SVC </p>
+
+![Linear SVC](image-11.png)
+</div>
+
+
+Based on the above comparison, we could say that for these three models with default settings, **LinearSVC performs better than anyone for 'toxic' label .**
+
+
+### Aggregated Hamming Loss Score
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>Hamming_Loss</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MultinomialNB</td>
+      <td>0.026939</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>LogisticRegression</td>
+      <td>0.025675</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>LinearSVC</td>
+      <td>0.028476</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+Across all models , **Logistic Regression** is doing a great job overall since it has the lowest percentage of incorrect labels.
+
+
+### Pipelines
+So far we have only compared models without any hyperparameter tuning. Let's clean the code with pipeline and use some manually chosen hyperparameters to check how each model behaves. Since the greatest concern now is the imbalanced data, we decide to manually adjust `class_weight` for the models to see if we can achieve better results.
+
+Since Logistic Regression and Linear SVM are performing better, we will focus on these two models. For display purpose, we will only include average F1 score, Recall, and Hamming Loss for comparison.
+
+- Notice that after adjusting `class_weight`, we are getting way better results than the basic models. LinearSVC outperforms LogisticRegression by approximately 1%.
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>F1</th>
+      <th>Recall</th>
+      <th>Hamming_Loss</th>
+      <th>Training_Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>LogisticRegression</td>
+      <td>0.947921</td>
+      <td>0.934050</td>
+      <td>0.065950</td>
+      <td>2.137849</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>LinearSVC</td>
+      <td>0.951508</td>
+      <td>0.941634</td>
+      <td>0.058366</td>
+      <td>7.478050</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+---
+
+## Hyperparameter Tuning with Grid Search
+We decide to do grid search to seek for the *"optimal"* hyperparameters for the basic models that we've chose. Later we will make comparison based on the best model from each algorithm, since we have 6 different lables, tuning models for each label would be time expensive, so we will use the *most common label ***"Toxic"*** to tune hyperparameters.*
+
+### Model Selection
+We will then compare these two models based on their tunned hyperparameters, we will also include training time as one of the metric when we compare models.
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>F1</th>
+      <th>Recall</th>
+      <th>Hamming_Loss</th>
+      <th>Traing_Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>LinearSVC</td>
+      <td>0.971706</td>
+      <td>0.971524</td>
+      <td>0.028476</td>
+      <td>5.029654</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>LogisticRegression</td>
+      <td>0.973227</td>
+      <td>0.974330</td>
+      <td>0.025670</td>
+      <td>13.031119</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## Ensembling
+Since Ensemble learning helps improve machine learning results by combining several models and allows the production of better predictive performance compared to a single model, we want to see if ensembling could help us achieve better results. 
+
+To ensemble different models, we firstly tried some models based on tree boosting, then use a voting classfier to ensemble one of the boosting model with the basic models in previous parts.
+
+### Boosting Models
+We tried 3 popular tree-based boosting models, and make a comparison for those models.
+
+- Score after boosting the models:
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>F1</th>
+      <th>Recall</th>
+      <th>Hamming_Loss</th>
+      <th>Traing_Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AdaBoostClassifier</td>
+      <td>0.967605</td>
+      <td>0.969771</td>
+      <td>0.030229</td>
+      <td>50.761416</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>GradientBoostingClassifier</td>
+      <td>0.969075</td>
+      <td>0.971748</td>
+      <td>0.028252</td>
+      <td>204.453572</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>XGBClassifier</td>
+      <td>0.967563</td>
+      <td>0.971790</td>
+      <td>0.028210</td>
+      <td>68.613414</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+Since *gradient boosting outperforms other two* boosting models, we decide to go ahead with ***gradient boosting***.
+
+### Voting Classifier
+Ensembled model worked very well but still ***could not outperform*** LinearSVC since we did not tune the hyperparameters for the ensemled model.
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>F1</th>
+      <th>Recall</th>
+      <th>Hamming_Loss</th>
+      <th>Training_Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Ensemble</td>
+      <td>0.973026</td>
+      <td>0.974119</td>
+      <td>0.025881</td>
+      <td>64.728463</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+## Result Interpretations
