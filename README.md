@@ -305,28 +305,28 @@ test_y = pd.read_csv("data/test_labels.csv")
 Below is the plot showing the comment length frequency. As noticed, most of the comments are short with only a few comments longer than 1000 words.
 
 
-![Comment length frequency plot](share\man\man1\image.png)
+![Comment length frequency plot](share/man/man1/image.png)
 
 
 Further exploratory shows that label `toxic` has the most observations in the training dataset while `threat` has the least.
 
-![Trainging dataset observations](share\man\man1\image-1.png)
+![Trainging dataset observations](share/man/man1/image-1.png)
 
 
 Below is the plot for the labeled data frequency. There is significant class imbalance since majority of the comments are considered non-toxic.
 
-![Significant class imbalance](share\man\man1\image-2.png)
+![Significant class imbalance](share/man/man1/image-2.png)
 
 
 *It might be a great practice to see which labels are likely to appear together with a comment.*
 
-![correlation matrix](share\man\man1\image-3.png)
+![correlation matrix](share/man/man1/image-3.png)
 
 * As seen in the cross-correlation matrix, there is a high chance of obscene comments to be insulting.
 
 * In order to get an idea of what are the words that contribute the most to different labels, we write a function to generate **word clouds**. The function takes in a parameter label (i.e., toxic, insult, threat, etc)
 
-![word-cloud sample](share\man\man1\image-4.png)
+![word-cloud sample](share/man/man1/image-4.png)
 
 ---
 
@@ -417,7 +417,7 @@ Based on the cross validation above the *linear SVC model and Logistic Regressio
 
 Determinig the models' performance on the actual prediction - the test dataset.
 
-![F1 Score](share\man\man1\image-5.png)
+![F1 Score](share/man/man1/image-5.png)
 
 Above are the result table and plot showing a comparison between these different models after training.
 
@@ -433,19 +433,19 @@ Visualizing performance till now for each classifier across each cateogry
 <div>
 <p align="center"> Mulitnomial Naive Bayes regression </p>
 
-![MNB regression](share\man\man1\image-6.png)
+![MNB regression](share/man/man1/image-6.png)
 </div>
 
 <div>
 <p align="center"> Logistic regression </p>
 
-![Logistic](share\man\man1\image-7.png)
+![Logistic](share/man/man1/image-7.png)
 </div>
 
 <div>
 <p align="center"> Linear SVC </p>
 
-![LSVC](share\man\man1\image-8.png)
+![LSVC](share/man/man1/image-8.png)
 </div>
 
 ### Confusion Matrix
@@ -455,19 +455,19 @@ Visualizing performance till now for each classifier across each cateogry
 <div>
 <p align="center"> Mulitnomial Naive Bayes regression </p>
 
-![MNB regression](share\man\man1\image-9.png)
+![MNB regression](share/man/man1/image-9.png)
 </div>
 
 <div>
 <p align="center"> Logistic regression </p>
 
-![Logistic](share\man\man1\image-10.png)
+![Logistic](share/man/man1/image-10.png)
 </div>
 
 <div>
 <p align="center"> Linear SVC </p>
 
-![Linear SVC](share\man\man1\image-11.png)
+![Linear SVC](share/man/man1/image-11.png)
 </div>
 
 
@@ -686,7 +686,7 @@ Ensembled model worked very well but still ***could not outperform*** LinearSVC 
 
     - Misclassified 1347 as non-toxic which were actually toxic
 
-    - ![wordcloud 2](share\man\man1\image-12.png)
+    - ![wordcloud 2](share/man/man1/image-12.png)
 
     - We want to analyze why the model couldn't recognize these words. Were they not present in the training set? 
     
@@ -702,7 +702,7 @@ Ensembled model worked very well but still ***could not outperform*** LinearSVC 
 Plot learning rate curve for the estimator with title, training data as X, 
 labels as y.
 
-![graph23](share\man\man1\image-13.png)
+![graph23](share/man/man1/image-13.png)
 
 ---
 
