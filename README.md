@@ -15,7 +15,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 ```
 * Data Analysis
 <div>
-<style scoped>
+<style>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
@@ -104,7 +104,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 </div>
 
 <div>
-<style scoped>
+<style>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
@@ -194,7 +194,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 
 
 <div>
-<style scoped>
+<style>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
@@ -248,7 +248,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 
 
 <div>
-<style scoped>
+<style>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
