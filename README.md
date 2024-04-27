@@ -16,6 +16,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 * Data Analysis
 <div>
 <style scoped>
+    
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
