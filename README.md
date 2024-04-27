@@ -305,3 +305,122 @@ Below is the plot for the labeled data frequency. There is significant class imb
 * In order to get an idea of what are the words that contribute the most to different labels, we write a function to generate **word clouds**. The function takes in a parameter label (i.e., toxic, insult, threat, etc)
 
 ![word-cloud sample](image-4.png)
+
+---
+
+## Feature Engineering
+Before fitting models, we need to break down the sentence into *unique words* by *tokenizing* the comments. In the `tokenize()` function, we remove punctuations and special characters. We also filtered out non-ascii characters after observing the results of feature engineering. We then *lemmatize* the comments and filter out comments with length below 3. Besides lemmatization, we also tried *stemming* but did not get a better result.
+
+* benchmarking different vectorizers
+    - We determined to use **TFIDF** to scale down the impact of tokens that occur very frequently in a given corpus and that are hence *empirically less informative* than features that occur in a small fraction of the training corpus.
+
+    - Besides TFIDF, we also tried **CountVectorizer**. However, it is not performing as well as TFIDF. The TfidfVectorizer is actually CountVectorizer followed by TfidfTransformer. *TfidfTransformer transforms a count matrix to a normalized Term-Frequency or TermFrequency-InverseDocumentFrequency representation.* The goal of using tf-idf instead of the raw frequencies of occurrence of a token in a given document is to *scale down the impact of tokens that occur very frequently* in a given corpus and that are hence empirically less informative than features that occur in a small fraction of the training corpus. That's why we can improve the accuracy here.
+
+    - For example: Since this corpus consists of data from the Wikipedia's talk page edits, the words such as wiki, Wikipedia, edit, page are very common. But for our classification purposes they do not provide us useful information and that should probably be the reason why TFIDF worked better than CountVectorizer.
+
+---
+
+## Modeling and Evaluation
+### Baseline Model
+We choose ***Naive Bayes*** as our baseline model, specifically *Multinomial Naive Bayes.*
+
+Also, we want to *compare between different models*, especially models that perform well in text classification. Thus, we choose to compare *Multinomial Naive Bayes with Logistic Regression and Linear Support Vector Machine.*
+
+### Evaluation Metrics
+Our main metric for measuring model performance is **F1-score**, since we have 6 labels, the F1-score would be the average of 6 labels. We will also take other metrics into consideration while evaluating models, e.g, *Hamming loss and recall.*
+
+### Cross Validation
+We use **Cross Validation** to compare between the baseline model and the other two models that we have chosen *(LogisticRegression and LinearSVC).*
+
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Model</th>
+      <th>Label</th>
+      <th>Recall</th>
+      <th>F1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MultinomialNB</td>
+      <td>toxic</td>
+      <td>0.483066</td>
+      <td>0.636650</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>MultinomialNB</td>
+      <td>severe_toxic</td>
+      <td>0.021336</td>
+      <td>0.041091</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>LogisticRegression</td>
+      <td>toxic</td>
+      <td>0.610500</td>
+      <td>0.731340</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>LogisticRegression</td>
+      <td>severe_toxic</td>
+      <td>0.256395</td>
+      <td>0.351711</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>LinearSVC</td>
+      <td>toxic</td>
+      <td>0.680528</td>
+      <td>0.759304</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>LinearSVC</td>
+      <td>severe_toxic</td>
+      <td>0.267693</td>
+      <td>0.355258</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+Based on the cross validation above, we noticed that overall, the linear SVC model and Logistic Regression model perform better. As a baseline model, Multinomial Naive Bayes does not perform well, especially for the `threat` label and `identity_hate` label because these two labels have the least number of observations.
+
+Now we want to see how these three models perform on the actual prediction - the test dataset.
+
+![F1 Score](image-5.png)
+
+Above are the result table and plot showing a comparison between these different models after training them and see how these models perform on the test data.
+
+Notice that Muninomial Naive Bayes does not perform as well as the other two models while Linear SVC in general out performs the others based on F1 score.
+
+---
+
+## Vizualizing Performance
+Visualizing performance till now for each classifier across each cateogry
+
+<div>
+<p align="center"> Mulitnomial Naive Bayes regression </p>
+
+![MNB regression](image-6.png)
+</div>
+
+<div>
+<p align="center"> Logistic regression </p>
+
+![Logistic](image-7.png)
+</div>
+
+<div>
+<p align="center"> Linear SVC </p>
+
+![LSVC](image-8.png)
+</div>
+
