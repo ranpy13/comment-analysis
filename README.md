@@ -6,6 +6,28 @@ A simple natural language processing model that analysis the toxicity of the com
 ## Overview
 > The project aims to build a multi-headed model that’s capable of detecting different types of of toxicity like threats, obscenity, insults, and identity-based hate, we will use a dataset of comments from Wikipedia’s talk page edits, collected by Kaggle. Improvements to the current model will hopefully help online discussion become more productive and respectful.
 
+## Installation steps:
+* Requirements:
+    * python 3.x
+    * basic ML libraries (see *requirements.txt*)
+    * dataset: [kaggle](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data?select=train.csv.zip)
+
+* installation:
+```
+python -m pip install --upgrade pip
+pipenv shell
+.\Scripts\activate
+
+pip install -r requirements.txt
+```
+
+* Run the base file: `main.py`
+```
+python main.py
+```
+
+---
+
 ## Data Preprocessing and Exploratory Data Analysis
 * Data Loading
 ```
@@ -283,28 +305,28 @@ test_y = pd.read_csv("data/test_labels.csv")
 Below is the plot showing the comment length frequency. As noticed, most of the comments are short with only a few comments longer than 1000 words.
 
 
-![Comment length frequency plot](image.png)
+![Comment length frequency plot](share\man\man1\image.png)
 
 
 Further exploratory shows that label `toxic` has the most observations in the training dataset while `threat` has the least.
 
-![Trainging dataset observations](image-1.png)
+![Trainging dataset observations](share\man\man1\image-1.png)
 
 
 Below is the plot for the labeled data frequency. There is significant class imbalance since majority of the comments are considered non-toxic.
 
-![Significant class imbalance](image-2.png)
+![Significant class imbalance](share\man\man1\image-2.png)
 
 
 *It might be a great practice to see which labels are likely to appear together with a comment.*
 
-![correlation matrix](image-3.png)
+![correlation matrix](share\man\man1\image-3.png)
 
 * As seen in the cross-correlation matrix, there is a high chance of obscene comments to be insulting.
 
 * In order to get an idea of what are the words that contribute the most to different labels, we write a function to generate **word clouds**. The function takes in a parameter label (i.e., toxic, insult, threat, etc)
 
-![word-cloud sample](image-4.png)
+![word-cloud sample](share\man\man1\image-4.png)
 
 ---
 
@@ -391,13 +413,13 @@ We use **Cross Validation** to compare between the baseline model and the other 
 </table>
 </div>
 
-Based on the cross validation above, we noticed that overall, the linear SVC model and Logistic Regression model perform better. As a baseline model, Multinomial Naive Bayes does not perform well, especially for the `threat` label and `identity_hate` label because these two labels have the least number of observations.
+Based on the cross validation above the *linear SVC model and Logistic Regression model perform better.* As a baseline model, Multinomial Naive Bayes does not perform well, especially for the `threat` label and `identity_hate` label because these two labels have the least number of observations.
 
-Now we want to see how these three models perform on the actual prediction - the test dataset.
+Determinig the models' performance on the actual prediction - the test dataset.
 
-![F1 Score](image-5.png)
+![F1 Score](share\man\man1\image-5.png)
 
-Above are the result table and plot showing a comparison between these different models after training them and see how these models perform on the test data.
+Above are the result table and plot showing a comparison between these different models after training.
 
 Notice that Muninomial Naive Bayes does not perform as well as the other two models while Linear SVC in general out performs the others based on F1 score.
 
@@ -411,19 +433,19 @@ Visualizing performance till now for each classifier across each cateogry
 <div>
 <p align="center"> Mulitnomial Naive Bayes regression </p>
 
-![MNB regression](image-6.png)
+![MNB regression](share\man\man1\image-6.png)
 </div>
 
 <div>
 <p align="center"> Logistic regression </p>
 
-![Logistic](image-7.png)
+![Logistic](share\man\man1\image-7.png)
 </div>
 
 <div>
 <p align="center"> Linear SVC </p>
 
-![LSVC](image-8.png)
+![LSVC](share\man\man1\image-8.png)
 </div>
 
 ### Confusion Matrix
@@ -433,19 +455,19 @@ Visualizing performance till now for each classifier across each cateogry
 <div>
 <p align="center"> Mulitnomial Naive Bayes regression </p>
 
-![MNB regression](image-9.png)
+![MNB regression](share\man\man1\image-9.png)
 </div>
 
 <div>
 <p align="center"> Logistic regression </p>
 
-![Logistic](image-10.png)
+![Logistic](share\man\man1\image-10.png)
 </div>
 
 <div>
 <p align="center"> Linear SVC </p>
 
-![Linear SVC](image-11.png)
+![Linear SVC](share\man\man1\image-11.png)
 </div>
 
 
@@ -487,7 +509,8 @@ Across all models , **Logistic Regression** is doing a great job overall since i
 
 
 ### Pipelines
-So far we have only compared models without any hyperparameter tuning. Let's clean the code with pipeline and use some manually chosen hyperparameters to check how each model behaves. Since the greatest concern now is the imbalanced data, we decide to manually adjust `class_weight` for the models to see if we can achieve better results.
+Clean the code with pipeline and use some manually chosen hyperparameters to check how each model behaves. 
+Manually adjusting `class_weight` for the models to determine if we can achieve better results.
 
 Since Logistic Regression and Linear SVM are performing better, we will focus on these two models. For display purpose, we will only include average F1 score, Recall, and Hamming Loss for comparison.
 
@@ -535,19 +558,6 @@ We decide to do grid search to seek for the *"optimal"* hyperparameters for the 
 We will then compare these two models based on their tunned hyperparameters, we will also include training time as one of the metric when we compare models.
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -583,29 +593,20 @@ We will then compare these two models based on their tunned hyperparameters, we 
 
 
 ## Ensembling
-Since Ensemble learning helps improve machine learning results by combining several models and allows the production of better predictive performance compared to a single model, we want to see if ensembling could help us achieve better results. 
+Since Ensemble learning helps improve machine learning results by combining several models and allows the production of better predictive performance compared to a single model.
+> Testing if ensembling helps us achieve better results. 
 
 To ensemble different models, we firstly tried some models based on tree boosting, then use a voting classfier to ensemble one of the boosting model with the basic models in previous parts.
 
 ### Boosting Models
-We tried 3 popular tree-based boosting models, and make a comparison for those models.
+Comparing 3 popular boosting models:
+        - Adaboost
+        - GradientBoost
+        - XgBoost
 
 - Score after boosting the models:
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -653,19 +654,6 @@ Since *gradient boosting outperforms other two* boosting models, we decide to go
 Ensembled model worked very well but still ***could not outperform*** LinearSVC since we did not tune the hyperparameters for the ensemled model.
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -691,5 +679,46 @@ Ensembled model worked very well but still ***could not outperform*** LinearSVC 
 </div>
 
 
+## Result Interpretation
+
+* What went wrong:
+    - Analyzing the words misclassified by Logistic Classifier. Checking for 'toxic' label
+
+    - Misclassified 1347 as non-toxic which were actually toxic
+
+    - ![wordcloud 2](share\man\man1\image-12.png)
+
+    - We want to analyze why the model couldn't recognize these words. Were they not present in the training set? 
+    
+    - In order to analyze, we first need to pass these raw comment strings through same tokenizer and check the common tokens.
+
+* `ucking` is a common word in the test set and it seems our classifier hasnt learnt to classify it as toxic. 
+
+* This token wasn't common in our training set. That explains why our model couldn't learn it. 
 
 
+### Learning Models visualization
+
+    Plot learning rate curve for the estimator with title, training data as X, 
+    labels as y.
+
+![graph23](share\man\man1\image-13.png)
+
+---
+
+## Future Improvements
+ - Try more ways of vectorizing text data.
+ - Go deeper on feature engineering : Spelling corrector, Sentiment scores, n-grams, etc.
+ - Advanced models (e.g., lightgbm).
+ - Advanced Ensemble model (e.g., stacking).
+ - Deep learning model (e.g., LSTM).
+ - Advanced hyperparameter tuning techniques (e.g., Bayesian Optimization).
+
+---
+
+## References:
+1. https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge
+
+2. https://github.com/nicknochnack/CommentToxicity
+
+3. https://youtu.be/ZUqB-luawZg?feature=shared
