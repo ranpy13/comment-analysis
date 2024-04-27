@@ -15,7 +15,7 @@ test_y = pd.read_csv("data/test_labels.csv")
 ```
 * Data Analysis
 <div>
-<style>
+<style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
@@ -28,6 +28,7 @@ test_y = pd.read_csv("data/test_labels.csv")
         text-align: right;
     }
 </style>
+
 <table border="1" class="dataframe">
     <caption> <b>train.head</b> </caption>
   <thead>
