@@ -699,8 +699,8 @@ Ensembled model worked very well but still ***could not outperform*** LinearSVC 
 
 ### Learning Models visualization
 
-    Plot learning rate curve for the estimator with title, training data as X, 
-    labels as y.
+Plot learning rate curve for the estimator with title, training data as X, 
+labels as y.
 
 ![graph23](share\man\man1\image-13.png)
 

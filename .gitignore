@@ -18,10 +18,6 @@ lib/
 lib64/
 parts/
 sdist/
-Scripts/
-scripts/
-Share/
-share/
 var/
 wheels/
 share/python-wheels/
